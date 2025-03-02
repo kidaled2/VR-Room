@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - InteractiveObject
+  - Statue
+  - Sophia
+  - Apeth
+  - Ennoia
+  - Episteme
   layers:
   - Default
   - TransparentFX
