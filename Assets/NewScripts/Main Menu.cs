@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 public class MainMenu : MonoBehaviour
 {
-    // "Oyuna Baþla" butonuna baðlayýn.
-    public void PlayGame()
+    public void LoadGame()
     {
-        // Oyun sahnesinin adýný veya indeksini girin
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    // "Çýkýþ" butonuna baðlayýn.
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
+
+
 }
+
