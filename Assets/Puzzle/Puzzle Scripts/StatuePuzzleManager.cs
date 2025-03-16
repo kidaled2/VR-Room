@@ -9,7 +9,9 @@ public class StatuePuzzleManager : MonoBehaviour
     [SerializeField] private int currentlyCompletedTasks = 0;
 
     [Header("Completion Events")]
-    public GameObject onPuzzleCompletion;
+    [SerializeField] private Animator gate = null;
+    [SerializeField] private string gateOpen = "GatesOpen";
+    //public GameObject onPuzzleCompletion;
 
     [Header("UI Elements")]
     public Text statueCountText;
@@ -25,7 +27,8 @@ public class StatuePuzzleManager : MonoBehaviour
     {
         if (currentlyCompletedTasks >= numberOfTasksToComplete)
         {
-            onPuzzleCompletion.SetActive(true);
+            //onPuzzleCompletion.SetActive(true);
+            gate.Play(gateOpen, 0, 0.0f);
         }
     }
 
