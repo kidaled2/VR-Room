@@ -10,6 +10,9 @@ TagManager:
   - Apeth
   - Ennoia
   - Episteme
+  - Column_Base
+  - Column_Mid
+  - Column_Capital
   layers:
   - Default
   - TransparentFX
