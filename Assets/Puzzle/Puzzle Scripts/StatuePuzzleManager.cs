@@ -10,7 +10,7 @@ public class StatuePuzzleManager : MonoBehaviour
 
     [Header("Completion Events")]
     [SerializeField] private Animator gate = null;
-    [SerializeField] private string gateOpen = "GatesOpen";
+    [SerializeField] private string gateOpen = "PuzzleGatesOpen";
     //public GameObject onPuzzleCompletion;
 
     [Header("UI Elements")]
