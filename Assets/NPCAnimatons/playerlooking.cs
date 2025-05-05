@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class playerlooking : MonoBehaviour
+public class PlayerLooking : MonoBehaviour
 {
-    [Tooltip("VR Rig içindeki Kamera (Main Camera) atanmalý ve otomatik bulunabilir.")]
+    [Tooltip("XR Rig içindeki Kamera Transform'u")]
     public Transform cameraTransform;
-    [Tooltip("Dönüþ hýzý")] public float turnSpeed = 2f;
+    [Tooltip("Dönüþ hýzý")]
+    public float turnSpeed = 2f;
 
     void Start()
     {
@@ -14,19 +13,22 @@ public class playerlooking : MonoBehaviour
             cameraTransform = Camera.main.transform;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (cameraTransform == null) return;
+
         // Yalnýzca yatay düzlemde dön
         Vector3 direction = cameraTransform.position - transform.position;
         direction.y = 0f;
+
         if (direction.sqrMagnitude > 0.001f)
         {
-            Quaternion target = Quaternion.LookRotation(direction);
+            Quaternion targetRot = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                target,
-                Time.deltaTime * turnSpeed);
+                targetRot,
+                turnSpeed * Time.deltaTime
+            );
         }
     }
 }
