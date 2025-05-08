@@ -17,9 +17,8 @@ public class PlayerLooking : MonoBehaviour
     {
         if (cameraTransform == null) return;
 
-        // Yalnýzca yatay düzlemde dön
         Vector3 direction = cameraTransform.position - transform.position;
-        direction.y = 0f;
+        direction.y = 0f; // sadece yatay düzlem
 
         if (direction.sqrMagnitude > 0.001f)
         {
@@ -32,3 +31,4 @@ public class PlayerLooking : MonoBehaviour
         }
     }
 }
+

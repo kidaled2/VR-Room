@@ -12,6 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea3f0f29968f7347b0af7c18088e5ec, type: 3}
   m_Name: DialougeData
   m_EditorClassIdentifier: 
-  npcName: 
+  npcName: Koylu
   sentences:
-  - Bu Test
+  - 'Bu bir test metnidir.
+
+'
+  - 'Bu bir test metnidir.
+
+'
+  - 'Bu bir test metnidir.
+
+'

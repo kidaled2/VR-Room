@@ -1,47 +1,106 @@
+// Assets/Scripts/NPCVision.cs
 using UnityEngine;
+using System;
 
+[RequireComponent(typeof(PlayerLooking))]
+[RequireComponent(typeof(Animator))]
 public class NPCVision : MonoBehaviour
 {
-    public float viewDistance = 5f;
-    [Range(0, 360)] public float viewAngle = 90f;
-    [Tooltip("Diyaloða engel olmayan layer'lar (örn. Player ve NPC)")]
-    public LayerMask detectionMask;
-    [Tooltip("Diyaloðu kesebilecek engellerin layer'larý (örn: Walls)")]
-    public LayerMask obstructionMask;
-    public string playerTag = "Player";
+    [Header("Görüþ Ayarlarý")]
+    [Tooltip("Kaç birim uzaktaki objeleri görebilsin (mesafe sýnýrý)")]
+    public float viewRadius = 20f;
+    [Tooltip("Açý kontrolünü atlamak istersen iþaretle (yalnýzca mesafe bazlý kontrol)")]
+    public bool ignoreAngle = false;
+    [Range(0, 360)]
+    [Tooltip("Nesne ile NPC ön vektörü arasýndaki maksimum açý (derece)")]
+    public float viewAngle = 120f;
+    [Tooltip("Raycast'in hangi katmanlardaki nesnelere çarpacaðýný seçin (NPC layer’ý hariç)")]
+    public LayerMask obstructionMask = ~0;
+
+    [Header("Baðlý Bileþenler")]
+    [Tooltip("NPC'nin dönmesini saðlayan PlayerLooking bileþeni")]
+    public PlayerLooking lookingScript;
+    [Tooltip("NPC Animator bileþeni, animasyon tetikleyicileri için")]
+    public Animator animator;
+
+    [Header("Animasyon Triggers")]
+    [Tooltip("Player algýlandýðýnda tetiklenecek Trigger")] public string headNodTrigger = "HeadNod";
+    [Tooltip("Görüþten çýktýðýnda tetiklenecek Trigger")] public string idleTrigger = "Idle";
+
+    private Transform cameraT;
+    private int npcLayer;
+    private bool playerInSight = false;
+
+    void Start()
+    {
+        // Kamera referansý
+        cameraT = Camera.main?.transform;
+        if (cameraT == null)
+            throw new Exception("NPCVision: MainCamera bulunamadý! Tag ve sahne hiyerarþisini kontrol edin.");
+
+        // PlayerLooking atamasý
+        lookingScript = lookingScript ?? GetComponent<PlayerLooking>();
+        if (lookingScript == null)
+            Debug.LogError("NPCVision: PlayerLooking component bulunamadý!");
+        lookingScript.enabled = false;
+
+        // Animator atamasý
+        animator = animator ?? GetComponent<Animator>();
+        if (animator == null)
+            Debug.LogWarning("NPCVision: Animator component yok, animasyon tetiklenemeyecek.");
+
+        // NPC layer'ýný obstructionMask'tan çýkar
+        npcLayer = gameObject.layer;
+        obstructionMask &= ~(1 << npcLayer);
+    }
 
     void Update()
     {
-        // 1) Menzil testi
-        Collider[] hits = Physics.OverlapSphere(transform.position, viewDistance, detectionMask);
-        foreach (var hit in hits)
+        Vector3 dir = cameraT.position - transform.position;
+        float dist = dir.magnitude;
+        Vector3 flat = new Vector3(dir.x, 0f, dir.z).normalized;
+        float ang = Vector3.Angle(transform.forward, flat);
+
+        // Debug görselleþtirmeleri
+        Debug.DrawLine(transform.position, transform.position + transform.forward * viewRadius, Color.red);
+        Debug.DrawLine(transform.position, cameraT.position, Color.green);
+        Debug.Log($"NPCVision: dist={dist:F2}, ang={ang:F1}");
+
+        // Menzil ve açý kontrolü
+        bool inRange = dist <= viewRadius;
+        bool inAngle = ignoreAngle || ang <= viewAngle * 0.5f;
+
+        if (inRange && inAngle)
         {
-            if (!hit.CompareTag(playerTag)) continue;
+            Vector3 eyePos = transform.position + Vector3.up * 1.5f + transform.forward * 0.1f;
+            bool blocked = Physics.Linecast(eyePos, cameraT.position, obstructionMask);
+            Debug.Log($"  Raycast blocked={blocked}");
 
-            // 2) Açýsal test
-            Vector3 dir = (hit.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, dir) > viewAngle / 2) continue;
-
-            // 3) Engel testi (Linecast)
-            RaycastHit info;
-            Vector3 origin = transform.position + Vector3.up * 1.5f;
-            Vector3 target = hit.transform.position + Vector3.up * 1.0f;
-            if (!Physics.Linecast(origin, target, out info, obstructionMask))
+            if (!blocked)
             {
-                Debug.Log("NPCVision: Sizi gördüm!");
-                // Baþka bir yerde StartDialogue'ý buradan da çaðýrabilirsiniz
+                if (!playerInSight)
+                {
+                    playerInSight = true;
+                    lookingScript.enabled = true;
+                    if (animator != null)
+                        animator.SetTrigger(headNodTrigger);
+                    Debug.Log(">>> Player görüldü, PlayerLooking ve HeadNod animasyonu aktifleþtirildi.");
+                }
+                // algýlandýktan sonra devam eden kodu engellemek için return ekleyebilirsiniz
                 return;
             }
+            else
+            {
+                Debug.Log("Ray, arada bir engele çarptý.");
+            }
         }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, viewDistance);
-        Vector3 left = Quaternion.Euler(0, -viewAngle / 2, 0) * transform.forward;
-        Vector3 right = Quaternion.Euler(0, viewAngle / 2, 0) * transform.forward;
-        Gizmos.DrawLine(transform.position, transform.position + left * viewDistance);
-        Gizmos.DrawLine(transform.position, transform.position + right * viewDistance);
+        else if (playerInSight)
+        {
+            playerInSight = false;
+            lookingScript.enabled = false;
+            if (animator != null)
+                animator.SetTrigger(idleTrigger);
+            Debug.Log("--- Player görüþten çýktý, PlayerLooking ve Idle animasyonu pasif edildi.");
+        }
     }
 }

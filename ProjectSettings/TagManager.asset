@@ -13,6 +13,13 @@ TagManager:
   - Column_Base
   - Column_Mid
   - Column_Capital
+  - Good_Grain
+  - Good_Ceramics
+  - Good_Figs
+  - Good_Wine
+  - Offering_Vase
+  - Offering_Basket
+  - Offering_Fruit
   layers:
   - Default
   - TransparentFX

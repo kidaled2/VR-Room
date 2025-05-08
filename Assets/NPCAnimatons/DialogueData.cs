@@ -1,13 +1,12 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Dialogue Data", fileName = "New Dialogue Data")]
+[CreateAssetMenu(menuName = "Dialogue Data")]
 public class DialogueData : ScriptableObject
 {
-    [Tooltip("NPC’nin diyalog baþlýðý olarak görünen adý")]
-    public string npcName;
+    [Header("NPC Bilgisi")]
+    public string npcName;              // Inspector'da görünür
 
-    [Tooltip("Diyalog sýrasýnda okunacak cümleler")]
-    public string[] sentences;
-    // -- veya --
-    // public List<string> sentences;
+    [Header("Diyalog Cümleleri")]
+    [TextArea(2, 5)]
+    public string[] sentences;          // Inspector'da dizi olarak gözükür
 }

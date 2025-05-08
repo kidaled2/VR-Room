@@ -3,22 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance;
 
     [Header("UI Atamalarý")]
-    public Animator panelAnimator;   // Panel’in Animator’ý
-    public TMP_Text nameText;        // Karakter adý gösterecek text
-    public TMP_Text dialogueText;    // Diyalog satýrlarýný gösterecek text
+    [Tooltip("Diyalog panelinin GameObject'i")]
+    public GameObject panelObject;  // Panel GameObject
+    [Tooltip("NPC ismini gösteren TextMeshProUGUI")]
+    public TMP_Text nameText;
+    [Tooltip("Diyalog satýrlarýný gösterecek TextMeshProUGUI")]
+    public TMP_Text dialogueText;
+    [Tooltip("Ýleri tuþu için buton (Next)")]
+    public Button nextButton;
+
+    [Header("Yazma Hýzý (saniye)")]
+    [Tooltip("Her karakter arasý bekleme süresi")]
+    public float typingSpeed = 0.03f;
 
     private Queue<string> sentences;
 
     void Awake()
     {
         // Singleton
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
         {
             Destroy(gameObject);
@@ -26,6 +40,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         sentences = new Queue<string>();
+
+        // Next butonuna listener ekle
+        if (nextButton != null)
+            nextButton.onClick.AddListener(DisplayNextSentence);
     }
 
     public void StartDialogue(DialogueData data)
@@ -36,45 +54,59 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // Paneli aç
-        if (panelAnimator != null)
-            panelAnimator.SetBool("IsOpen", true);
+        // Paneli aktif et
+        if (panelObject != null)
+            panelObject.SetActive(true);
 
-        nameText.text = data.npcName;
+        // NPC ismini ayarla
+        if (nameText != null)
+            nameText.text = data.npcName;
 
+        // Kuyruðu temizle ve cümleleri ekle
         sentences.Clear();
         foreach (var s in data.sentences)
             sentences.Enqueue(s);
 
+        // Ýlk cümleyi göster
         DisplayNextSentence();
     }
 
     public void DisplayNextSentence()
     {
+        // Eðer kuyruk boþsa diyalog bitiþi
         if (sentences.Count == 0)
         {
             EndDialogue();
             return;
         }
 
+        // Bir sonraki cümle
         string line = sentences.Dequeue();
         StopAllCoroutines();
         StartCoroutine(TypeSentence(line));
     }
 
-    IEnumerator TypeSentence(string line)
+    private IEnumerator TypeSentence(string line)
     {
-        dialogueText.text = "";
+        if (dialogueText == null)
+            yield break;
+
+        dialogueText.text = string.Empty;
         foreach (char c in line.ToCharArray())
         {
             dialogueText.text += c;
-            yield return null;
+            yield return new WaitForSeconds(typingSpeed);
         }
     }
 
-    void EndDialogue()
+    private void EndDialogue()
     {
-        if (panelAnimator != null)
-            panelAnimator.SetBool("IsOpen", false);
+        // Paneli deaktif et
+        if (panelObject != null)
+            panelObject.SetActive(false);
+
+        // Butonu temizle
+        if (nextButton != null)
+            nextButton.onClick.RemoveListener(DisplayNextSentence);
     }
 }
