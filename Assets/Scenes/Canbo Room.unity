@@ -2978,7 +2978,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d28fe74d4a33744ea344b7e046ed506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcDialogueData: {fileID: 11400000, guid: 9ec4a1bd7db3ad6419762ae51068b9aa, type: 2}
 --- !u!114 &648166638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3469,6 +3468,26 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 680894521}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &695143898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7731043594475986471, guid: 3ae4310ed9db6f94490e339ef70b9268,
+    type: 3}
+  m_PrefabInstance: {fileID: 5739071647661343550}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &695143906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695143898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16f3ffa1195eac748b76084c2e0d0d1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  emissionColor: {r: 0.22985952, g: 0.7169812, b: 0.14542542, a: 1}
+  blinkSpeed: 1
 --- !u!1 &697334212
 GameObject:
   m_ObjectHideFlags: 0
@@ -7132,7 +7151,7 @@ Transform:
   m_GameObject: {fileID: 1313711679}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.0000029504295}
-  m_LocalPosition: {x: 2.04, y: 0, z: -4.123}
+  m_LocalPosition: {x: -9.221, y: 0, z: -6.858}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7468,8 +7487,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aef1aebd2c9bae48b4599176906d678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialoguePanel: {fileID: 6243450}
-  dialogueText: {fileID: 543041499}
 --- !u!4 &1361615748
 Transform:
   m_ObjectHideFlags: 0
@@ -10833,7 +10850,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7731043594475986471, guid: 3ae4310ed9db6f94490e339ef70b9268,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 695143906}
   m_SourcePrefab: {fileID: 100100000, guid: 3ae4310ed9db6f94490e339ef70b9268, type: 3}
 --- !u!1 &5831799139095376824
 GameObject:
