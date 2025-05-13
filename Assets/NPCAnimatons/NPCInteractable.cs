@@ -1,7 +1,8 @@
-// Assets/Scripts/NPCInteractable.cs
+using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
@@ -10,43 +11,42 @@ public class NPCInteractable : XRGrabInteractable
 {
     [Tooltip("Inspector’dan atayacaðýnýz DialogueData asset’i")]
     public DialogueData dialogueData;
+    [Tooltip("Diyalog sýrasýnda tetiklenecek trigger parametresi adý")]
+    public string talkingTrigger = "Talking";
+    [Tooltip("Animator içindeki yürüyüþ hýzý parametresi adý")]
+    public string speedParam = "Speed";
 
     private NavMeshAgent navAgent;
-    private CharacterController characterController;
     private Animator animator;
-
-    [Header("Animasyon Triggers")]
-    [Tooltip("Diyalog baþladýðýnda tetiklenecek Trigger")] public string talkingTrigger = "Talking";
-    [Tooltip("Diyalog öncesi selamlaþma animasyonu (opsiyonel)")] public string wavingTrigger = "Waving";
+    private HashSet<string> animatorParams;
 
     protected override void Awake()
     {
         base.Awake();
         navAgent = GetComponent<NavMeshAgent>();
-        characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        // Animator parametre isimlerini önbelleðe al
+        if (animator != null)
+            animatorParams = new HashSet<string>(animator.parameters.Select(p => p.name));
+    }
+
+    void Update()
+    {
+        if (animator != null && navAgent != null && !string.IsNullOrEmpty(speedParam))
+        {
+            float speed = navAgent.velocity.magnitude;
+            // Parametre varsa ayarla, yoksa loglama yapma
+            if (animatorParams != null && animatorParams.Contains(speedParam))
+                animator.SetFloat(speedParam, speed);
+        }
     }
 
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
         base.OnSelectEntered(args);
-
-        // 1) Hareketi durdur
-        if (navAgent != null)
-            navAgent.isStopped = true;
-        if (characterController != null)
-            characterController.enabled = false;
-
-        // 2) Selamlaþma animasyonu
-        if (animator != null && !string.IsNullOrEmpty(wavingTrigger))
-            animator.SetTrigger(wavingTrigger);
-
-        // 3) Diyalog animasyonu
-        if (animator != null && !string.IsNullOrEmpty(talkingTrigger))
+        if (navAgent != null) navAgent.isStopped = true;
+        if (animator != null && !string.IsNullOrEmpty(talkingTrigger) && animatorParams.Contains(talkingTrigger))
             animator.SetTrigger(talkingTrigger);
-
-        Debug.Log("NPC seçildi! Diyaloðu baþlatýlýyor...");
         DialogueManager.Instance.StartDialogue(dialogueData);
     }
 }
-
