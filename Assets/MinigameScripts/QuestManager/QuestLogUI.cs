@@ -1,38 +1,41 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuestLogUI : MonoBehaviour
 {
-    public QuestLog questLog;
+    public RectTransform contentParent;
     public GameObject questItemPrefab;
-    public Transform contentParent;
+    public QuestLog questLog;
 
     void OnEnable()
     {
         PopulateQuests();
     }
 
-    /// <summary>
-    /// ContentParent altýný temizler ve güncel görevleri listeler.
-    /// </summary>
     public void PopulateQuests()
     {
-        // 1) Mevcut satýrlarý sil
+        // Mevcut öðeleri temizle
         foreach (Transform child in contentParent)
             Destroy(child.gameObject);
 
-        // 2) Her giriþ için yeni QuestItem yarat
+        // Yeni öðeleri ekle
         foreach (var entry in questLog.quests)
         {
-            var go = Instantiate(questItemPrefab, contentParent);
-            var qi = go.GetComponent<QuestItem>();
-            qi.Setup(entry);
-
-            // Ýstersen burada renk kodlayabilirsin:
-            if (entry.isCompleted)
-                go.GetComponentInChildren<TMPro.TMP_Text>().color = Color.gray;
+            // worldPositionStays = false => local konum/layout’u koru
+            var go = Instantiate(questItemPrefab, contentParent, false);
+            go.GetComponent<QuestItem>().Setup(entry);
         }
+
+        // Bir frame gecikmeli layout rebuild
+        StartCoroutine(DelayedRebuild());
+    }
+
+    private IEnumerator DelayedRebuild()
+    {
+        yield return null; // bir frame bekle
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
     }
 }
 
