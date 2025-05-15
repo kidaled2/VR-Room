@@ -1657,7 +1657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emissionColor: {r: 0.23137255, g: 0.7176471, b: 0.14509805, a: 1}
-  blinkSpeed: 2
+  blinkSpeed: 1
 --- !u!1 &384665173 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1413088526922336683, guid: 3ae4310ed9db6f94490e339ef70b9268,
@@ -1677,7 +1677,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emissionColor: {r: 0.23137255, g: 0.7176471, b: 0.14509805, a: 1}
-  blinkSpeed: 2
+  blinkSpeed: 1
 --- !u!4 &402681948 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8749893754708885322, guid: 38340d4a0ac59e14dba87194143b1881,
@@ -9462,7 +9462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emissionColor: {r: 0.23137255, g: 0.7176471, b: 0.14509805, a: 1}
-  blinkSpeed: 2
+  blinkSpeed: 1
 --- !u!1001 &2066068099
 PrefabInstance:
   m_ObjectHideFlags: 0
