@@ -1,9 +1,10 @@
 using System.Collections;
+/// QuestLog.cs
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Quest System/Quest Log")]
+[CreateAssetMenu(fileName = "QuestLog", menuName = "Quest/QuestLog")]
 public class QuestLog : ScriptableObject
 {
-    public QuestEntry[] quests;
+    public List<QuestEntry> quests = new List<QuestEntry>();
 }

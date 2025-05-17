@@ -1,29 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+/// CartController.cs
 using UnityEngine;
-using TMPro;  // Eðer sayaç göstereceksen
 
 public class CartController : MonoBehaviour
 {
-    public int cargoCount = 0;
-    public TMP_Text statusText;
-
-    // 1?? Görev yöneticisi referansý
+    [Header("Quest")]
     public QuestManager questManager;
 
+    /// <summary>
+    /// Called by LoadingZone when a Cargo is placed
+    /// </summary>
     public void AddCargo()
     {
-        cargoCount++;
-        if (statusText != null)
-            statusText.text = $"{cargoCount}/5 paket yüklendi";
-
-        // 2?? 5 paket yüklendiðinde görevi tamamla
-        if (cargoCount >= 5)
-        {
-            if (questManager != null)
-                questManager.CompleteQuest("Paketleri Arabaya Yükle");
-        }
+        questManager.Trigger("Paketleri Arabaya Yükle");
     }
 }
+
+
+
 
 

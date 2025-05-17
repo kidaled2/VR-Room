@@ -1,23 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+/// PipeSegment.cs
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 [RequireComponent(typeof(XRGrabInteractable))]
 public class PipeSegment : MonoBehaviour
 {
-    void Awake()
+    private void Awake()
     {
-        var grab = GetComponent<XRGrabInteractable>();
-        grab.selectEntered.AddListener(_ => Rotate90());
+        GetComponent<XRGrabInteractable>()
+            .selectEntered.AddListener(_ => Rotate90());
     }
 
-    void Rotate90()
+    private void Rotate90()
     {
-        // Y ekseni etrafýnda 90° döndür
-        transform.Rotate(0, 90, 0, Space.World);
+        transform.Rotate(0, 90, 0, Space.Self);
     }
 }
+
+
 
 
 

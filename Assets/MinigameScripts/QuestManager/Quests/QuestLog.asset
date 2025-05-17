@@ -13,10 +13,21 @@ MonoBehaviour:
   m_Name: QuestLog
   m_EditorClassIdentifier: 
   quests:
-  - {fileID: 11400000, guid: 7c5a77fecd236ed439256409b4ef7649, type: 2}
-  - {fileID: 11400000, guid: 7dd0421255375c64ead755c9f647950c, type: 2}
-  - {fileID: 11400000, guid: e7fece786d15dd145a274ce62df98179, type: 2}
-  - {fileID: 11400000, guid: 01652fec67e754342a50b7c1d74704b9, type: 2}
-  - {fileID: 11400000, guid: 75b611ce2f0597647ac5569329f45cba, type: 2}
-  - {fileID: 11400000, guid: 803204b91ef530d4592dad5f8f9c4c72, type: 2}
-  - {fileID: 11400000, guid: 627917a6000a78742aa09ceda0fde550, type: 2}
+  - title: "Paketleri Arabaya Y\xFCkle"
+    description: "Y\xFCk paketlerini araca yerle\u015Ftirin"
+    isCompleted: 0
+  - title: "Borular\u0131 Ba\u011Fla"
+    description: "Boru par\xE7alar\u0131n\u0131 90\xB0\u2019lik a\xE7\u0131ya getirip
+      su f\u0131skiyesini aktifle\u015Ftirin"
+    isCompleted: 0
+  - title: "Sunak Adak Yerle\u015Ftirme"
+    description: "Sepet, vazo ve meyve adaklar\u0131n\u0131 kutsal sunakta sunun"
+    isCompleted: 0
+  - title: "Ya\u011F Lambas\u0131 Yerle\u015Ftirme"
+    description: "Gaz lambalar\u0131n\u0131 spot noktalar\u0131na yerle\u015Ftirip
+      sabitleyin"
+    isCompleted: 0
+  - title: "T\xFCccar G\xF6revi"
+    description: "T\xFCccar\u0131n istedi\u011Fi e\u015Fyay\u0131 se\xE7ip teslim
+      ederek g\xF6revi tamamlay\u0131n"
+    isCompleted: 0

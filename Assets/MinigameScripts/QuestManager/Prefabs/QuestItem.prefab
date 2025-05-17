@@ -331,6 +331,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   titleText: {fileID: 5625575836261731362}
   descText: {fileID: 3177040498765096268}
+  backgroundImage: {fileID: 2167750742568777149}
+  normalBgColor: {r: 1, g: 1, b: 1, a: 1}
+  completedBgColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.4}
+  normalTextColor: {r: 0, g: 0, b: 0, a: 1}
+  completedTextColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &5483775056437779134
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,24 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+/// ConnectManager.cs
 using System.Linq;
+using UnityEngine;
 
 public class ConnectManager : MonoBehaviour
 {
-    public PipeSegment[] segments;      // Sahnedeki PipeSegment bileþenleri
-    public ParticleSystem fountain;     // Su efektini oynatacak sistem
+    [Header("Puzzle Segments")]
+    public PipeSegment[] segments;
+    [Header("Fountain")]
+    public ParticleSystem fountain;
+    [Header("Quest")]
+    public QuestManager questManager;
+    private bool started;
+    private const string questTitle = "Borularý Baðla";
 
-    void Update()
+    private void Update()
     {
-        // Her parça tam 90° katlarýna dönük mü diye kontrol et
         bool allAligned = segments.All(s =>
             Mathf.Approximately(
-                Mathf.Round(s.transform.eulerAngles.y / 90) * 90,
+                Mathf.Round(s.transform.eulerAngles.y / 90f) * 90f,
                 s.transform.eulerAngles.y));
 
-        if (allAligned && !fountain.isPlaying)
+        if (allAligned && !started)
+        {
+            started = true;
             fountain.Play();
+            questManager.Trigger(questTitle);
+        }
         else if (!allAligned && fountain.isPlaying)
+        {
             fountain.Stop();
+        }
     }
 }
+
+

@@ -21,6 +21,7 @@ TagManager:
   - Offering_Basket
   - Offering_Fruit
   - GasLamp
+  - Cargo
   layers:
   - Default
   - TransparentFX

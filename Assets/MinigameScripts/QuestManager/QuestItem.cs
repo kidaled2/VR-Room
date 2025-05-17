@@ -1,14 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+/// QuestItem.cs
 using UnityEngine;
-using UnityEngine.UI;           // ? Bu satýrý ekleyin
-
+using UnityEngine.UI;
+using TMPro;
 
 public class QuestItem : MonoBehaviour
 {
     public TMP_Text titleText;
     public TMP_Text descText;
+    public Image backgroundImage;
+
+    [Header("Colors")]
+    public Color normalBgColor = Color.white;
+    public Color completedBgColor = new Color(0.2f, 0.2f, 0.2f, 0.4f);
+    public Color normalTextColor = Color.black;
+    public Color completedTextColor = Color.gray;
 
     public void Setup(QuestEntry entry)
     {
@@ -17,10 +24,18 @@ public class QuestItem : MonoBehaviour
 
         if (entry.isCompleted)
         {
-            // Kart arka planýný soluklaþtýr
-            GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0.4f);
-            titleText.color = Color.gray;
+            backgroundImage.color = completedBgColor;
+            titleText.color = completedTextColor;
+            descText.color = completedTextColor;
+        }
+        else
+        {
+            backgroundImage.color = normalBgColor;
+            titleText.color = normalTextColor;
+            descText.color = normalTextColor;
         }
     }
-
 }
+
+
+
