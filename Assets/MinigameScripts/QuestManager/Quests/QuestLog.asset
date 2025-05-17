@@ -31,3 +31,9 @@ MonoBehaviour:
     description: "T\xFCccar\u0131n istedi\u011Fi e\u015Fyay\u0131 se\xE7ip teslim
       ederek g\xF6revi tamamlay\u0131n"
     isCompleted: 0
+  - title: "Heykel Yerle\u015Ftirme"
+    description: "Celsus K\xFCt\xFCphanesindeki heykelleri do\u011Fru yerlere yerle\u015Ftir"
+    isCompleted: 0
+  - title: Yapbozu Tamamla
+    description: Antik Tiyatrodaki yapbozu tamamla
+    isCompleted: 0
