@@ -13,6 +13,8 @@ public class StatuePuzzleManager : MonoBehaviour
     [SerializeField] private string gateOpen = "PuzzleGatesOpen";
     //public GameObject onPuzzleCompletion;
 
+    public QuestManager questManager;
+
     [Header("UI Elements")]
     public Text statueCountText;
 
@@ -29,6 +31,7 @@ public class StatuePuzzleManager : MonoBehaviour
         {
             //onPuzzleCompletion.SetActive(true);
             gate.Play(gateOpen, 0, 0.0f);
+            questManager.Trigger("Heykel Yerleþtirme");
         }
     }
 

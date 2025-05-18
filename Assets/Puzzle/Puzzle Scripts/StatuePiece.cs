@@ -8,6 +8,8 @@ public class StatuePiece : MonoBehaviour
     [SerializeField] private Transform CorrectPuzzlePiece;
     private XRSocketInteractor socket;
 
+    public QuestManager questManager;
+
     private void Awake() => socket = GetComponent<XRSocketInteractor>();
 
     [SerializeField] private EmissionBlink emissionBlink;  // Sahne içinden atanacak
@@ -38,6 +40,7 @@ public class StatuePiece : MonoBehaviour
         if (snappedObjectName.transform.name == CorrectPuzzlePiece.name)
         {
             linkedPuzzleManager.CompletedPuzzleTask();
+            questManager.Trigger("Heykel Yerleþtirme");
         }
     }
 

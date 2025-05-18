@@ -10,6 +10,8 @@ public class PuzzleManager : MonoBehaviour
     [Header("Completion Events")]
     public GameObject onPuzzleCompletion;
 
+    public QuestManager questManager;
+
     public void CompletedPuzzleTask()
     {
         currentlyCompletedTasks++;
@@ -21,6 +23,7 @@ public class PuzzleManager : MonoBehaviour
         if (currentlyCompletedTasks >= numberOfTasksToComplete)
         {
             onPuzzleCompletion.SetActive(true);
+            questManager.Trigger("Yapbozu Tamamla");
         }
     }
 

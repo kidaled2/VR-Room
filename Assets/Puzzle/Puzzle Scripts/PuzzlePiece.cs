@@ -8,6 +8,8 @@ public class PuzzlePiece : MonoBehaviour
     [SerializeField] private Transform CorrectPuzzlePiece;
     private XRSocketInteractor socket;
 
+    public QuestManager questManager;
+
     private void Awake() => socket = GetComponent<XRSocketInteractor>();
 
     private void OnEnable()
@@ -28,6 +30,7 @@ public class PuzzlePiece : MonoBehaviour
         if (snappedObjectName.transform.name == CorrectPuzzlePiece.name)
         {
             linkedPuzzleManager.CompletedPuzzleTask();
+            questManager.Trigger("Yapbozu Tamamla");
         }
     }
 
