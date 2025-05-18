@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-/// PipeSegment.cs
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 

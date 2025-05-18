@@ -1,38 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
-/// ConnectManager.cs
 using System.Linq;
 using UnityEngine;
 
 public class ConnectManager : MonoBehaviour
 {
-    [Header("Puzzle Segments")]
-    public PipeSegment[] segments;
-    [Header("Fountain")]
+    [Tooltip("Sýrasýyla tüm PipeSegment EndPoint'leri")]
+    public Transform[] endPoints;
+    [Tooltip("Tamamlanýnca patlayacak particle")]
     public ParticleSystem fountain;
-    [Header("Quest")]
+    [Tooltip("Quest tetikleyici")]
     public QuestManager questManager;
-    private bool started;
-    private const string questTitle = "Borularý Baðla";
+    [Tooltip("ScriptableObject’teki Görev Baþlýðý")]
+    public string questTitle = "Borularý Baðla";
 
-    private void Update()
+    [Tooltip("Birbirine dönüklük toleransý (derece)")]
+    public float angleTolerance = 15f;
+    [Tooltip("Uçlar arasý maksimum mesafe (metre)")]
+    public float distanceTolerance = 0.15f;
+
+    private bool started = false;
+
+    void Update()
     {
-        bool allAligned = segments.All(s =>
-            Mathf.Approximately(
-                Mathf.Round(s.transform.eulerAngles.y / 90f) * 90f,
-                s.transform.eulerAngles.y));
+        bool allConnected = true;
 
-        if (allAligned && !started)
+        for (int i = 0; i < endPoints.Length - 1; i++)
+        {
+            Transform a = endPoints[i];
+            Transform b = endPoints[i + 1];
+
+            // 1) Uçlar arasý mesafe kontrolü
+            float dist = Vector3.Distance(a.position, b.position);
+            if (dist > distanceTolerance)
+            {
+                allConnected = false;
+                break;
+            }
+
+            // 2) Yön kontrolü: a'nýn forward'u b'ye bakýyor mu?
+            Vector3 toNext = (b.position - a.position).normalized;
+            float angleA = Vector3.Angle(a.forward, toNext);
+            if (angleA > angleTolerance)
+            {
+                allConnected = false;
+                break;
+            }
+
+            // 3) Ayrýca b'nin forward'u da a'ya bakmalý
+            float angleB = Vector3.Angle(b.forward, -toNext);
+            if (angleB > angleTolerance)
+            {
+                allConnected = false;
+                break;
+            }
+        }
+
+        if (allConnected && !started)
         {
             started = true;
             fountain.Play();
             questManager.Trigger(questTitle);
         }
-        else if (!allAligned && fountain.isPlaying)
+        else if (!allConnected && fountain.isPlaying)
         {
             fountain.Stop();
         }
     }
 }
+
 
 

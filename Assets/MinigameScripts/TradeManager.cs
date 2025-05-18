@@ -1,4 +1,3 @@
-/// TradeManager.cs
 using UnityEngine;
 using TMPro;
 

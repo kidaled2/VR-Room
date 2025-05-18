@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,18 +9,16 @@ public class QuestManager : MonoBehaviour
     public QuestLogUI questLogUI;    // Liste UI’ý
 
     [Header("World-Space UI Settings (match QuestLog order)")]
-    public List<Transform> anchors;        // Sahnedeki Empty’ler: CargoAnchor, FountainAnchor, AltarAnchor, LampAnchor, TraderAnchor
-    public List<Vector3> offsets;          // offset’ler: (0,1,0), (0,1,0), (0,0.7,0), (0,1,0), (0,1.2,0)
-    public List<int> requiredCounts;       // tetikleme sayýlarý: 3, 1, 3, 6, 1
+    public List<Transform> anchors;      // Sahnedeki takip noktalarý
+    public List<Vector3> offsets;        // Her quest için UI offset’i
+    public List<int> requiredCounts;     // Her quest’in tamamlanma sayýsý
 
-    private Dictionary<string, int> progress = new();
+    private Dictionary<string, int> progress = new Dictionary<string, int>();
 
     void Start()
     {
-        // Listeyi baþta doldur
+        // Listeyi baþta doldur ve uzunluklarý kontrol et
         questLogUI.PopulateQuests();
-
-        // Kolay hata yakalama:
         if (questLog.quests.Count != anchors.Count ||
             anchors.Count != offsets.Count ||
             offsets.Count != requiredCounts.Count)
@@ -31,15 +28,17 @@ public class QuestManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Quest logdaki entry ile ayný index’li anchor/offset/requiredCount’u kullanarak tetikleme yapar.
+    /// Bir quest tetiklendiðinde çaðrýlýr.
     /// </summary>
     public void Trigger(string title)
     {
-        // progress map
+        // 1) Progress dictionary’de var mý yok mu kontrol
         if (!progress.ContainsKey(title))
             progress[title] = 0;
 
-        // entry ve index
+        Debug.Log($"[QuestTrigger] '{title}' called. progress before = {progress[title]}");
+
+        // 2) QuestEntry ve index bul
         var entry = questLog.quests.FirstOrDefault(q => q.title == title);
         if (entry == null)
         {
@@ -48,23 +47,26 @@ public class QuestManager : MonoBehaviour
         }
         int idx = questLog.quests.IndexOf(entry);
 
-        // requiredCount, anchor, offset
+        // 3) Ýlgili required count, anchor ve offset
         int req = requiredCounts[idx];
         Transform anchor = anchors[idx];
         Vector3 off = offsets[idx];
 
-        // ilk tetiklemede liste güncelle
+        Debug.Log($"[QuestTrigger] idx = {idx}, requiredCount = {req}");
+
+        // 4) Ýlk tetiklemede listeyi güncelle
         if (progress[title] == 0)
             questLogUI.PopulateQuests();
 
-        // sayaç
+        // 5) Sayaç artýþý
         progress[title]++;
+        Debug.Log($"[QuestTrigger] progress after = {progress[title]}");
 
-        // world-space UI
+        // 6) World-space UI göster ve sayacý güncelle
         ObjectiveDisplayManager.Instance.ShowObjectiveAbove(anchor, entry.description, off);
         ObjectiveDisplayManager.Instance.UpdateStatus(progress[title], req);
 
-        // tamamlandýysa
+        // 7) Tamamlandýysa iþaretle ve gizle
         if (progress[title] >= req)
         {
             entry.isCompleted = true;

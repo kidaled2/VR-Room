@@ -1,4 +1,3 @@
-/// OfferingZone.cs
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
