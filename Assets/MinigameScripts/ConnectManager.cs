@@ -1,73 +1,65 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class ConnectManager : MonoBehaviour
 {
-    [Tooltip("Sýrasýyla tüm PipeSegment EndPoint'leri")]
-    public Transform[] endPoints;
-    [Tooltip("Tamamlanýnca patlayacak particle")]
+    [Tooltip("UÃ§ noktalarÄ± sÄ±rasÄ±yla: Pipe1/EndPoint1, Pipe1/EndPoint2, Pipe2/EndPoint3, Pipe2/EndPoint4")]
+    public Transform[] endPoints;    // 4 eleman
+
     public ParticleSystem fountain;
-    [Tooltip("Quest tetikleyici")]
     public QuestManager questManager;
-    [Tooltip("ScriptableObject’teki Görev Baþlýðý")]
-    public string questTitle = "Borularý Baðla";
+    public string questTitle = "BorularÄ± BaÄŸla";
 
-    [Tooltip("Birbirine dönüklük toleransý (derece)")]
-    public float angleTolerance = 15f;
-    [Tooltip("Uçlar arasý maksimum mesafe (metre)")]
-    public float distanceTolerance = 0.15f;
+    [Header("Sadece mesafe kontrolÃ¼")]
+    public float distanceTolerance = 0.25f;  // Ã¶nceki 0.02'yi 0.25'e Ã§ektik
 
-    private bool started = false;
+    int lastTriggeredPair = 0;
+    bool fountainPlayed = false;
 
     void Update()
     {
-        bool allConnected = true;
+        int totalPairs = endPoints.Length / 2;  // 2
+        int connectedPairs = 0;
 
-        for (int i = 0; i < endPoints.Length - 1; i++)
+        // Her Ã§ift iÃ§in sadece mesafe kontrolÃ¼
+        for (int i = 0; i < endPoints.Length; i += 2)
         {
-            Transform a = endPoints[i];
-            Transform b = endPoints[i + 1];
-
-            // 1) Uçlar arasý mesafe kontrolü
-            float dist = Vector3.Distance(a.position, b.position);
-            if (dist > distanceTolerance)
-            {
-                allConnected = false;
-                break;
-            }
-
-            // 2) Yön kontrolü: a'nýn forward'u b'ye bakýyor mu?
-            Vector3 toNext = (b.position - a.position).normalized;
-            float angleA = Vector3.Angle(a.forward, toNext);
-            if (angleA > angleTolerance)
-            {
-                allConnected = false;
-                break;
-            }
-
-            // 3) Ayrýca b'nin forward'u da a'ya bakmalý
-            float angleB = Vector3.Angle(b.forward, -toNext);
-            if (angleB > angleTolerance)
-            {
-                allConnected = false;
-                break;
-            }
+            float d = Vector3.Distance(
+                endPoints[i].position,
+                endPoints[i + 1].position
+            );
+            Debug.Log($"[Connect] Pair#{i / 2 + 1}: dist={d:F3} (tol={distanceTolerance})");
+            if (d <= distanceTolerance)
+                connectedPairs++;
         }
 
-        if (allConnected && !started)
+        // AdÄ±m adÄ±m quest trigger
+        while (lastTriggeredPair < connectedPairs)
         {
-            started = true;
-            fountain.Play();
+            Debug.Log($"[ConnectManager] Triggering step {lastTriggeredPair + 1}/{totalPairs}");
             questManager.Trigger(questTitle);
+            lastTriggeredPair++;
         }
-        else if (!allConnected && fountain.isPlaying)
+
+        // Ä°kinci Ã§ift baÄŸlandÄ±ÄŸÄ±nda bir kere particle
+        if (connectedPairs == totalPairs && !fountainPlayed)
+        {
+            fountain.Play();
+            fountainPlayed = true;
+        }
+        else if (connectedPairs != totalPairs && fountainPlayed)
         {
             fountain.Stop();
+            fountainPlayed = false;
         }
     }
 }
+
+
+
+
 
 
 

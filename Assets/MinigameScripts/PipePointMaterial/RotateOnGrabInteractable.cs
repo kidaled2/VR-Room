@@ -6,24 +6,29 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(XRGrabInteractable))]
 public class RotateOnSelect : MonoBehaviour
 {
-    XRGrabInteractable grab;
+    XRGrabInteractable _grab;
 
     void Awake()
     {
-        grab = GetComponent<XRGrabInteractable>();
+        _grab = GetComponent<XRGrabInteractable>();
     }
 
     void Update()
     {
-        // Eðer þu anda grab tuþuna basýlý ve bu interactor ile seçildiyse
-        if (grab.isSelected && grab.selectingInteractor != null)
+        // Eðer þu anda grab tuþuna basýlý ve obje seçili ise
+        if (_grab.isSelected)
         {
-            // Interactor’ýn Y açýsýný al
-            float yAngle = grab.selectingInteractor.transform.eulerAngles.y;
-            // Sadece Y ekseninde dön
-            transform.rotation = Quaternion.Euler(0f, yAngle, 0f);
+            // En eski (ilk) interactor'u al
+            var interactor = _grab.GetOldestInteractorSelecting();
+            if (interactor != null)
+            {
+                // Interactor'ýn Y açýsýný alýp objeyi döndür
+                float yAngle = interactor.transform.eulerAngles.y;
+                transform.rotation = Quaternion.Euler(0f, yAngle, 0f);
+            }
         }
     }
 }
+
 
 

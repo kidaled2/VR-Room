@@ -6,17 +6,27 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(XRGrabInteractable))]
 public class PipeSegment : MonoBehaviour
 {
-    private void Awake()
+    XRGrabInteractable _grab;
+
+    void Awake()
     {
-        GetComponent<XRGrabInteractable>()
-            .selectEntered.AddListener(_ => Rotate90());
+        _grab = GetComponent<XRGrabInteractable>();
     }
 
-    private void Rotate90()
+    void Update()
     {
-        transform.Rotate(0, 90, 0, Space.Self);
+        if (_grab.isSelected)
+        {
+            var interactor = _grab.GetOldestInteractorSelecting();
+            if (interactor != null)
+            {
+                float yAngle = interactor.transform.eulerAngles.y;
+                transform.rotation = Quaternion.Euler(0f, yAngle, 0f);
+            }
+        }
     }
 }
+
 
 
 
