@@ -1,44 +1,57 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class QuestManager : MonoBehaviour
 {
     [Header("Quest Data")]
-    public QuestLog questLog;        // ScriptableObject içindeki List<QuestEntry>
-    public QuestLogUI questLogUI;    // Liste UI’ý
+    public QuestLog questLog;
+    public QuestLogUI questLogUI;
 
     [Header("World-Space UI Settings (match QuestLog order)")]
-    public List<Transform> anchors;      // Sahnedeki takip noktalarý
-    public List<Vector3> offsets;        // Her quest için UI offset’i
-    public List<int> requiredCounts;     // Her quest’in tamamlanma sayýsý
+    public List<Transform> anchors;
+    public List<Vector3> offsets;
+    public List<int> requiredCounts;
 
+    [Header("End Game Event")]
+    public UnityEvent onAllQuestsCompleted;
+
+    // runtime ilerleme kayýtlarý
     private Dictionary<string, int> progress = new Dictionary<string, int>();
+
+    void Awake()
+    {
+        // Oyun baþlarken önce tüm kayýtlý ilerlemeyi ve tamamlanma bayraklarýný sýfýrla
+        progress.Clear();
+        foreach (var entry in questLog.quests)
+            entry.isCompleted = false;
+    }
 
     void Start()
     {
-        // Listeyi baþta doldur ve uzunluklarý kontrol et
+        // 1) Ýlk önce UI listesini temizlenmiþ verilerle doldur
         questLogUI.PopulateQuests();
+
+        // 2) Listelerin uzunluklarýný hala kontrol et
         if (questLog.quests.Count != anchors.Count ||
             anchors.Count != offsets.Count ||
             offsets.Count != requiredCounts.Count)
         {
-            Debug.LogError("QuestManager: lists lengths mismatch! Check anchors, offsets, requiredCounts.");
+            Debug.LogError(
+                "QuestManager: lists lengths mismatch! " +
+                "Check anchors, offsets, requiredCounts."
+            );
         }
     }
 
-    /// <summary>
-    /// Bir quest tetiklendiðinde çaðrýlýr.
-    /// </summary>
     public void Trigger(string title)
     {
-        // 1) Progress dictionary’de var mý yok mu kontrol
         if (!progress.ContainsKey(title))
             progress[title] = 0;
 
-        Debug.Log($"[QuestTrigger] '{title}' called. progress before = {progress[title]}");
+        Debug.Log($"[QuestTrigger] '{title}' called. before={progress[title]}");
 
-        // 2) QuestEntry ve index bul
         var entry = questLog.quests.FirstOrDefault(q => q.title == title);
         if (entry == null)
         {
@@ -47,32 +60,33 @@ public class QuestManager : MonoBehaviour
         }
         int idx = questLog.quests.IndexOf(entry);
 
-        // 3) Ýlgili required count, anchor ve offset
-        int req = requiredCounts[idx];
-        Transform anchor = anchors[idx];
+        int reqCount = requiredCounts[idx];
+        Transform anc = anchors[idx];
         Vector3 off = offsets[idx];
 
-        Debug.Log($"[QuestTrigger] idx = {idx}, requiredCount = {req}");
-
-        // 4) Ýlk tetiklemede listeyi güncelle
         if (progress[title] == 0)
             questLogUI.PopulateQuests();
 
-        // 5) Sayaç artýþý
         progress[title]++;
-        Debug.Log($"[QuestTrigger] progress after = {progress[title]}");
+        Debug.Log($"[QuestTrigger] after={progress[title]}");
 
-        // 6) World-space UI göster ve sayacý güncelle
-        ObjectiveDisplayManager.Instance.ShowObjectiveAbove(anchor, entry.description, off);
-        ObjectiveDisplayManager.Instance.UpdateStatus(progress[title], req);
+        ObjectiveDisplayManager.Instance.ShowObjectiveAbove(anc, entry.description, off);
+        ObjectiveDisplayManager.Instance.UpdateStatus(progress[title], reqCount);
 
-        // 7) Tamamlandýysa iþaretle ve gizle
-        if (progress[title] >= req)
+        if (progress[title] >= reqCount)
         {
             entry.isCompleted = true;
             questLogUI.PopulateQuests();
             ObjectiveDisplayManager.Instance.HideObjective();
+
+            if (questLog.quests.All(q => q.isCompleted))
+            {
+                Debug.Log("QuestManager: tüm görevler tamamlandý, event tetikleniyor.");
+                onAllQuestsCompleted?.Invoke();
+            }
         }
     }
 }
+
+
 
