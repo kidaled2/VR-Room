@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -11,7 +12,11 @@ public class StatuePuzzleManager : MonoBehaviour
     [Header("Completion Events")]
     [SerializeField] private Animator gate = null;
     [SerializeField] private string gateOpen = "PuzzleGatesOpen";
-    //public GameObject onPuzzleCompletion;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip gateOpenSound;
+
 
     public QuestManager questManager;
 
@@ -29,8 +34,15 @@ public class StatuePuzzleManager : MonoBehaviour
     {
         if (currentlyCompletedTasks >= numberOfTasksToComplete)
         {
-            //onPuzzleCompletion.SetActive(true);
-            gate.Play(gateOpen, 0, 0.0f);
+            StartCoroutine(OpenGateWithDelay());
+            //gate.Play(gateOpen, 0, 0.0f);
+
+            // Ses çal
+            if (audioSource != null && gateOpenSound != null)
+            {
+                audioSource.PlayOneShot(gateOpenSound);
+            }
+
             questManager.Trigger("Heykel Yerleþtirme");
         }
     }
@@ -39,5 +51,11 @@ public class StatuePuzzleManager : MonoBehaviour
     {
         currentlyCompletedTasks--;
         statueCountText.text = "- " + currentlyCompletedTasks + " / 4 yerleþtirilen heykel";
+    }
+
+    private IEnumerator OpenGateWithDelay()
+    {
+        yield return new WaitForSeconds(1f); // 1 saniye bekle
+        gate.Play(gateOpen, 0, 0.0f);        // Animasyonu baþlat
     }
 }
